@@ -3,41 +3,33 @@
 @{
     ViewBag.Title = "Create";
 }
+
+<h2>Create</h2>
 <div class="row">
-    @using (Html.BeginForm("Create", "Cards", FormMethod.Post, new { @class = "col-md-4" }))
+    @using (Html.BeginForm("Create", "Cards", FormMethod.Post, new {@class = "col-md-4"}))
     {
         <fieldset>
             <legend>Create Card</legend>
             <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <label>Card Name</label><br />
-                    @Html.TextBoxFor(m => m.NewCard.CardTitle, new { placeholder = "Enter card name" })
-                </div>
+                <label>Card Name</label><br />
+                @Html.TextBoxFor(m => m.NewCard.CardTitle, new {placeholder = "Enter card name"})
+            </div>
+            <div class="form-group">
+                <label>Cost</label><br />
+                @Html.TextBoxFor(m => m.NewCard.CardCost, new { placeholder = "Enter card cost" })
+            </div>
+            <div class="form-group">
+                <label>Image</label><br />
+                @Html.TextBoxFor(m => m.NewCard.ImagePath, new { placeholder = "Enter image path" })
+            </div>
+            <div class="form-group">
+                <label>Card Set</label><br />
+                @Html.DropDownListFor(m => m.NewCard.CardSetId, Model.CardSetOptions)
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
-                    <label>Cost</label><br />
-                    @Html.TextBoxFor(m => m.NewCard.CardCost, new { placeholder = "Enter card cost" })
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <label>Image</label><br />
-                    @Html.TextBoxFor(m => m.NewCard.ImagePath, new { placeholder = "Enter image path" })
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <label>Card Set</label><br />
-                    @Html.DropDownListFor(m => m.NewCard.CardSetId, Model.CardSetOptions)
-                  
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <br />
                     <button type="submit" class="btn btn-primary">Save Changes</button>
-                    @Html.ActionLink("Cancel", "Index", "Cards", null, new {@class = "btn"})
+                    @Html.ActionLink("Cancel", "Index", "Cards", null, new { @class = "btn" })
                 </div>
             </div>
         </fieldset>
