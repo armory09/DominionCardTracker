@@ -52,6 +52,8 @@
     <Compile Include="Repository\CardModifierRepository.cs" />
     <Compile Include="Repository\CardRepository.cs" />
     <Compile Include="Repository\CardSetRepository.cs" />
+    <Compile Include="Repository\CategoryRepository.cs" />
+    <Compile Include="Repository\ModifierTypeRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

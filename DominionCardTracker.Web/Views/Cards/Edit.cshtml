@@ -1,7 +1,118 @@
-﻿@model DominionCardTracker.Web.Models.CardCreateModel
+﻿@model DominionCardTracker.Web.Models.CardEditModel
 
 @{
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit</h2>
+<h1>Edit</h1>
+<div class="row">
+    @using (Html.BeginForm("Edit", "Cards", FormMethod.Post, new { @class = "col-md-4" }))
+    {
+        <fieldset>
+            <legend>Create Card</legend>
+            @Html.HiddenFor(m => m.Card.CardId)
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <label>Card Name</label><br />
+                    @Html.TextBoxFor(m => m.Card.CardTitle, new { placeholder = "Enter card name" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <label>Cost</label><br />
+                    @Html.TextBoxFor(m => m.Card.CardCost, new { placeholder = "Enter card cost" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <label>Image</label><br />
+                    @Html.TextBoxFor(m => m.Card.ImagePath, new { placeholder = "Enter image path" })
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <label>Card Set</label><br />
+                    @Html.DropDownListFor(m => m.Card.CardId, Model.CardSetOptions)
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <br />
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    @Html.ActionLink("Cancel", "Index", "Cards", null, new { @class = "btn" })
+                </div>
+            </div>
+        </fieldset>
+    }
+</div>
+
+@section scripts{
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script>
+
+        function CardModifier(id, name, value, instructions) {
+            var self = this;
+            self.id = id;
+            self.name = name;
+            self.value = value;
+            self.instructions = instructions;
+        }
+
+        function ModifiersViewModel() {
+            var self = this;
+
+            self.cardId = "@Model.Card.CardId";
+            self.newModifierTypeId = ko.observable();
+            self.newModifierValue = ko.observable();
+            self.newModifierInstructions = ko.observable();
+
+            self.modifiers = ko.observableArray([
+                @foreach (var mod in Model.Card.Modifiers)
+                {
+                    <text>new CardModifier("@mod.CardModifierId", "@mod.ModifierTypeName", "@mod.ModifierValue", "@mod.InstructionText")</text>
+                }
+            ]);
+
+            //Operations
+            self.addModifier = function() {
+                $.ajax("/Cards/AddModifier", {
+                    data: ko.toJSON({
+                        CardId: self.cardId,
+                        ModifierTypeId: self.newModifierTypeId,
+                        Modifiervalue: self.newModifierValue,
+                        InstructionText: self.newModifierInstructions
+                    }),
+                    type: "post",
+                    contentType: "application/json",
+                    success: function(result) {
+                        self.modifiers.removeAll();
+                        result.Modifiers.forEach(function(mod) {
+                            self.modifiers.push(new CardModifier(mod.CardModifierId, mod.ModifierTypeName, mod.Modifiervalue, mod.InstructionText));
+                        });
+                    },
+                    error: function(xmlHttpRequest, textStatus, errorThrown) {
+                        alert("Status: " + textStatus);
+                        alert("Error " + errorThrown);
+                    }
+                });
+            };
+
+            self.removeModifier = function(modifier) {
+                $.ajax("/Cards/RemoveModifier", {
+                    data: ko.toJSON({ id: modifier.id }),
+                    type: "post",
+                    contentType: "application/json",
+                    success: function(result) {
+                        self.modifiers.remove(modifier);
+                    },
+                    error: function(xmlHttpRequest, textStatus, errorThrown) {
+                        alert("Status: " + textStatus);
+                        alert("Error: " + errorThrown);
+                    }
+                });
+            };
+        }
+
+        ko.applyBindings(new ModifiersViewModel());
+    </script>
+}

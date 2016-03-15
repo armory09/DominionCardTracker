@@ -27,5 +27,28 @@ namespace DominionCardTracker.DataLayer.Repository
                 connection.Execute("CardSetInsert", p, commandType: CommandType.StoredProcedure);
             }
         }
+
+        public void Update(CardSet cardSet)
+        {
+            using (var connection = new SqlConnection(ConfigurationSettings.GetConnectionString()))
+            {
+                var p = new DynamicParameters();
+                p.Add("@CardSetId", cardSet.CardSetId);
+                p.Add("@CardSetName", cardSet.CardSetName);
+
+                connection.Execute("CardSetUpdate", p, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public void Delete(int cardSetId)
+        {
+            using (var connection = new SqlConnection(ConfigurationSettings.GetConnectionString()))
+            {
+                var p = new DynamicParameters();
+                p.Add("@CardSetId", cardSetId);
+
+                connection.Execute("CardSetDelete", p, commandType: CommandType.StoredProcedure);
+            }
+        }
     }
 }
