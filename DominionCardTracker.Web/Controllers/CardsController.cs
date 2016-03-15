@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using DominionCardTracker.DataLayer.Repository;
 using DominionCardTracker.Models.Tables;
@@ -44,7 +45,41 @@ namespace DominionCardTracker.Web.Controllers
 
         public ActionResult Edit(int id)
         {
-            return View();
+            var cardSetRepo = new CardSetRepository();
+            var cardRepo = new CardRepository();
+            var modifierTypeRepo = new ModifierTypeRepository();
+
+            var model = new CardEditModel(cardRepo.SelectView(id), cardSetRepo.SelectAll(), modifierTypeRepo.SelectAll());
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(Card card)
+        {
+            var cardRepo = new CardRepository();
+            cardRepo.Update(card);
+
+            return RedirectToAction("Index", "Cards");
+        }
+
+        [HttpPost]
+        public ActionResult Removemodifier(int id)
+        {
+            var cardModifierRepo = new CardModifierRepository();
+            cardModifierRepo.Delete(id);
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
+        public JsonResult AddModifier(CardModifier model)
+        {
+            var cardModifierRepo = new CardModifierRepository();
+            var cardRepo = new CardRepository();
+
+            cardModifierRepo.Insert(model);
+            return Json(cardRepo.SelectView(model.CardId), JsonRequestBehavior.AllowGet);
         }
     }
 }
